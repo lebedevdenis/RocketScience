@@ -1,2 +1,16 @@
 # RocketScience
- 
+## Introduction
+This project is based on an exercise that 1st year undergraduate Engineering students solve at the University of Oxford. The task is to land a rocket safely from an initial height of 3,000 m and an initial velocity of 300 m/s towards the earth. The rocket needs to touch down at less than 2 m/s and at no time may the rocket's acceleration exceed 6g (≈ 59 m/s<sup>2</sup>). The students' task is to design a function of desired velocity, which depends on the height of the rocket above ground. This desired velocity is then the reference signal for a simple proportional controller, which takes the error between desired velocity and actual velocity of the rocket as an input and computes the thrust that should be applied as an output. Students also need to compute the optimal gain of the controller. Besides descending and landing safely, the students should also aim to save as much fuel as possible. While the students are asked to start with a linear function of desired velocity against height, it is non-trivial to find the optimal trajectory, which will be _non-linear_. While we do not expect the students to solve this problem, it still poses an interesting challenge that we explore in this project.
+
+## This project
+To find an approximately optimal trajectory of desired velocity against height, we pursue the following iterative procedure: We let the rocket drop for a pre-specified distance and then construct the linear trajectory from the point in velocity-height space to the desired final point at a very small velocity (less than 2m/s) and height 0 m. We find the optimal controller gain using a non-linear solver taking into account the safety constraints.
+
+In the next iteration, we split the linear trajectory in the middle to form a piecewise linear function with fixed start and end point, but a variable joint in the middle, which can be adjusted along the desired velocity dimension. Therefore, we optimise the desired velocity of this joint together with the optimal controller gain using a non-linear solver.
+
+Next, we split the function into 3 pieces, where the now 2 joints are found by splitting the previous function uniformly along the height axis and finding the desired velocity coordinates from the previous iteration. We optimise again, now for both joints and the controller gain. Finally, this procedure of splitting the function is repeated until a relatively smooth approximation to the optimal trajectory in the space of desired velocity against height is achieved. The simulation below shows the refinement of this trajectory for 30 iterations on the left and the simulated rocket telemetry data for all iterations on the right.
+![Alt Text](https://github.com/lebedevdenis/RocketScience/blob/master/myVideoFile.gif)
+
+## Quick start guide
+To run the iteration optimisation algorithm and to produce the animated plot above simply download the files in this repository and run the [iterOpt.m](iterOpt.m) file.
+## Acknowledgements
+I would like to thank Eric Peasley and Isobel Mear for their continuous work on the undergraduate lab that this project is based on. Part of the code used for this project was produced by them. It was a great pleasure for me to work with them over three academic years (2017–2020) as a lab demonstrator!
